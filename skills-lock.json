@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "semgrep": {
+      "source": "semgrep/skills",
+      "sourceType": "github",
+      "computedHash": "bce882b4d92ce161e6c54b85dd3774b54a7b71c1186000b00b8297a88222b90c"
+    }
+  }
+}

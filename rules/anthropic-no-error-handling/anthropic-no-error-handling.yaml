@@ -1,0 +1,18 @@
+rules:
+  - id: anthropic-no-error-handling
+    languages: [python]
+    severity: WARNING
+    message: >-
+      Anthropic API call without error handling. Wrap API calls in try/except to
+      handle rate limits, API errors, and network issues gracefully.
+    metadata:
+      category: security
+      confidence: MEDIUM
+      technology: [anthropic]
+    patterns:
+      - pattern: $CLIENT.messages.create(...)
+      - pattern-not-inside: |
+          try:
+              ...
+          except ...:
+              ...
