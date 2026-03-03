@@ -100,7 +100,7 @@ repos:
         args: ['--config', 'path/to/ai-best-practices/rules/', '--error']
 ```
 
-## Rule Catalog (22 rules, 49 sub-rules)
+## Rule Catalog (23 rules, 51 sub-rules)
 
 ### Hardcoded Credentials
 
@@ -121,6 +121,7 @@ repos:
 | `anthropic-missing-refusal-check` | `.content` without `stop_reason` check | py, js/ts |
 | `openai-missing-user-parameter` | `chat.completions.create()` without `user=` | py, js/ts |
 | `anthropic-missing-system-prompt` | `messages.create()` without `system=` | py, js/ts |
+| `openai-missing-max-tokens` | `chat.completions.create()` without `max_tokens=` | py, js/ts |
 | `anthropic-missing-max-tokens` | `messages.create()` without `max_tokens=` | py, js/ts |
 | `gemini-missing-safety-settings` | `generate_content()` without `safety_settings=` | py, js/ts |
 
