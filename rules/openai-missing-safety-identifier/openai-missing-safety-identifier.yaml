@@ -1,0 +1,30 @@
+rules:
+  - id: openai-missing-safety-identifier-python
+    languages: [python]
+    severity: WARNING
+    message: >-
+      OpenAI Responses API called without 'safety_identifier' parameter. Include
+      a hashed user identifier to enable abuse monitoring and safety checks. See
+      https://developers.openai.com/api/docs/guides/safety-checks
+    metadata:
+      category: security
+      confidence: HIGH
+      technology: [openai]
+    patterns:
+      - pattern: $CLIENT.responses.create(...)
+      - pattern-not: $CLIENT.responses.create(..., safety_identifier=$SID, ...)
+
+  - id: openai-missing-safety-identifier-javascript
+    languages: [javascript, typescript]
+    severity: WARNING
+    message: >-
+      OpenAI Responses API called without 'safety_identifier' parameter. Include
+      a hashed user identifier to enable abuse monitoring and safety checks. See
+      https://developers.openai.com/api/docs/guides/safety-checks
+    metadata:
+      category: security
+      confidence: HIGH
+      technology: [openai]
+    patterns:
+      - pattern: "$CLIENT.responses.create({...})"
+      - pattern-not: "$CLIENT.responses.create({..., safety_identifier: $SID, ...})"

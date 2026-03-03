@@ -100,7 +100,7 @@ repos:
         args: ['--config', 'path/to/ai-best-practices/rules/', '--error']
 ```
 
-## Rule Catalog (23 rules, 51 sub-rules)
+## Rule Catalog (31 rules, 65 sub-rules)
 
 ### Hardcoded Credentials
 
@@ -120,10 +120,15 @@ repos:
 | `openai-missing-refusal-check` | `.message.content` without `.message.refusal` guard | py, js/ts |
 | `anthropic-missing-refusal-check` | `.content` without `stop_reason` check | py, js/ts |
 | `openai-missing-user-parameter` | `chat.completions.create()` without `user=` | py, js/ts |
-| `anthropic-missing-system-prompt` | `messages.create()` without `system=` | py, js/ts |
+| `openai-missing-safety-identifier` | `responses.create()` without `safety_identifier=` | py, js/ts |
 | `openai-missing-max-tokens` | `chat.completions.create()` without `max_tokens=` | py, js/ts |
+| `anthropic-missing-system-prompt` | `messages.create()` without `system=` | py, js/ts |
 | `anthropic-missing-max-tokens` | `messages.create()` without `max_tokens=` | py, js/ts |
+| `anthropic-missing-metadata-user-id` | `messages.create()` without `metadata=` for user tracking | py, js/ts |
 | `gemini-missing-safety-settings` | `generate_content()` without `safety_settings=` | py, js/ts |
+| `gemini-missing-system-instruction` | `GenerativeModel()` without `system_instruction=` | py, js/ts |
+| `mistral-missing-safe-prompt` | `chat.complete()` without `safe_prompt=` | py, js/ts |
+| `cohere-missing-safety-mode` | `chat()` without `safety_mode=` | py, js/ts |
 
 ### Prompt Injection (taint analysis)
 
@@ -139,6 +144,9 @@ repos:
 |------|----------------|-----------|
 | `openai-missing-system-message` | Chat completion without a system message | py, js/ts |
 | `openai-missing-moderation` | Chat completion without moderation in same function | py |
+| `openai-missing-moderation-check` | Moderation response accessed without checking `.flagged` | py |
+| `mistral-missing-moderation` | Chat completion without `classifiers.moderate()` in same function | py |
+| `cohere-safety-mode-off` | `safety_mode="OFF"` explicitly disabling safety | py, js/ts |
 | `openai-no-error-handling` | OpenAI call outside try/except | py |
 | `anthropic-no-error-handling` | Anthropic call outside try/except | py |
 | `gemini-no-error-handling` | Gemini call outside try/except | py |
@@ -171,12 +179,17 @@ See [rules/README.md](rules/README.md) for detailed documentation.
 
 ## References
 
-- [OpenAI Safety Best Practices](https://platform.openai.com/docs/guides/safety-best-practices)
+- [OpenAI Safety Best Practices](https://developers.openai.com/api/docs/guides/safety-best-practices/)
+- [OpenAI Safety Checks](https://developers.openai.com/api/docs/guides/safety-checks/)
+- [OpenAI Moderation Guide](https://developers.openai.com/api/docs/guides/moderation)
 - [OpenAI API Key Safety](https://help.openai.com/en/articles/5112595-best-practices-for-api-key-safety)
-- [Anthropic API Documentation](https://docs.anthropic.com/en/api)
+- [Anthropic API Safeguards](https://support.claude.com/en/articles/9199617-api-safeguards-tools)
+- [Anthropic API Key Best Practices](https://support.claude.com/en/articles/9767949-api-key-best-practices-keeping-your-keys-safe-and-secure)
+- [Google Gemini Safety Guidance](https://ai.google.dev/gemini-api/docs/safety-guidance)
 - [Google Gemini Safety Settings](https://ai.google.dev/gemini-api/docs/safety-settings)
-- [Cohere API Documentation](https://docs.cohere.com/)
-- [Mistral API Documentation](https://docs.mistral.ai/)
+- [Cohere Safety Modes](https://docs.cohere.com/docs/safety-modes)
+- [Mistral Guardrailing](https://docs.mistral.ai/capabilities/guardrailing/)
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/)
 
 ## License
 
