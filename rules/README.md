@@ -30,7 +30,7 @@ Detects API keys hardcoded in source code instead of using environment variables
 | `mistral-hardcoded-api-key` | ERROR | `Mistral(api_key="...")` and variants | py, js/ts |
 | `llm-api-key-in-source` | ERROR | Any variable assigned a string matching known AI key prefixes (`sk-`, `sk-ant-`, `sk-proj-`, `AIza`) | py, js/ts, go, java, rb |
 
-### Phase 2: Missing Safety Checks (6 rules)
+### Phase 2: Missing Safety Checks (7 rules)
 
 Detects missing safety parameters and guards in LLM API calls.
 
@@ -39,6 +39,7 @@ Detects missing safety parameters and guards in LLM API calls.
 | `openai-missing-refusal-check` | WARNING | Accessing `.message.content` without checking `.message.refusal` | py, js/ts |
 | `anthropic-missing-refusal-check` | WARNING | Accessing `.content` without checking `stop_reason` | py, js/ts |
 | `openai-missing-user-parameter` | WARNING | `chat.completions.create()` without `user=` parameter | py, js/ts |
+| `openai-missing-max-tokens` | WARNING | `chat.completions.create()` without `max_tokens=` parameter | py, js/ts |
 | `anthropic-missing-system-prompt` | WARNING | `messages.create()` without `system=` parameter | py, js/ts |
 | `anthropic-missing-max-tokens` | WARNING | `messages.create()` without `max_tokens=` parameter | py, js/ts |
 | `gemini-missing-safety-settings` | WARNING | `generate_content()` without `safety_settings=` parameter | py, js/ts |
@@ -143,8 +144,8 @@ response = client.chat.completions.create(...)  # moderation handled in middlewa
 
 ## Stats
 
-- **22 YAML rule files** containing **49 individual rules** (multi-language rules split per language)
-- **49 test files** with positive and negative test cases
-- **71 total files** across 22 rule directories
+- **23 YAML rule files** containing **51 individual rules** (multi-language rules split per language)
+- **51 test files** with positive and negative test cases
+- **74 total files** across 23 rule directories
 - **5 providers covered:** OpenAI, Anthropic, Google Gemini, Cohere, Mistral
 - **5 languages:** Python, JavaScript/TypeScript, Go, Java, Ruby
