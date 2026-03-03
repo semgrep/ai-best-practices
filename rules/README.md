@@ -30,7 +30,7 @@ Detects API keys hardcoded in source code instead of using environment variables
 | `mistral-hardcoded-api-key` | ERROR | `Mistral(api_key="...")` and variants | py, js/ts |
 | `llm-api-key-in-source` | ERROR | Any variable assigned a string matching known AI key prefixes (`sk-`, `sk-ant-`, `sk-proj-`, `AIza`) | py, js/ts, go, java, rb |
 
-### Phase 2: Missing Safety Checks (7 rules)
+### Phase 2: Missing Safety Checks (12 rules)
 
 Detects missing safety parameters and guards in LLM API calls.
 
@@ -39,10 +39,15 @@ Detects missing safety parameters and guards in LLM API calls.
 | `openai-missing-refusal-check` | WARNING | Accessing `.message.content` without checking `.message.refusal` | py, js/ts |
 | `anthropic-missing-refusal-check` | WARNING | Accessing `.content` without checking `stop_reason` | py, js/ts |
 | `openai-missing-user-parameter` | WARNING | `chat.completions.create()` without `user=` parameter | py, js/ts |
+| `openai-missing-safety-identifier` | WARNING | `responses.create()` without `safety_identifier=` parameter | py, js/ts |
 | `openai-missing-max-tokens` | WARNING | `chat.completions.create()` without `max_tokens=` parameter | py, js/ts |
 | `anthropic-missing-system-prompt` | WARNING | `messages.create()` without `system=` parameter | py, js/ts |
 | `anthropic-missing-max-tokens` | WARNING | `messages.create()` without `max_tokens=` parameter | py, js/ts |
+| `anthropic-missing-metadata-user-id` | WARNING | `messages.create()` without `metadata=` for user tracking | py, js/ts |
 | `gemini-missing-safety-settings` | WARNING | `generate_content()` without `safety_settings=` parameter | py, js/ts |
+| `gemini-missing-system-instruction` | WARNING | `GenerativeModel()` without `system_instruction=` parameter | py, js/ts |
+| `mistral-missing-safe-prompt` | WARNING | `chat.complete()` without `safe_prompt=` parameter | py, js/ts |
+| `cohere-missing-safety-mode` | WARNING | `chat()` without explicit `safety_mode=` parameter | py, js/ts |
 
 ### Phase 3: Prompt Injection (3 taint rules)
 
@@ -56,7 +61,7 @@ Detects user input flowing into system prompts, enabling prompt injection attack
 
 **Taint sources:** Flask (`request.args`, `request.form`, `request.json`), Django (`request.GET`, `request.POST`), Express (`req.body`, `req.query`, `req.params`)
 
-### Phase 4: Missing Safeguards (7 rules)
+### Phase 4: Missing Safeguards (10 rules)
 
 Detects missing error handling, content moderation, and system messages.
 
@@ -64,6 +69,9 @@ Detects missing error handling, content moderation, and system messages.
 |---------|----------|----------------|-----------|
 | `openai-missing-system-message` | WARNING | `messages=[...]` with no `{"role": "system", ...}` | py, js/ts |
 | `openai-missing-moderation` | WARNING | `chat.completions.create()` without `moderations.create()` in same function | py |
+| `openai-missing-moderation-check` | WARNING | Moderation response accessed without checking `.flagged` | py |
+| `mistral-missing-moderation` | WARNING | `chat.complete()` without `classifiers.moderate()` in same function | py |
+| `cohere-safety-mode-off` | ERROR | `safety_mode="OFF"` explicitly disabling all safety guardrails | py, js/ts |
 | `openai-no-error-handling` | WARNING | OpenAI API call not in try/except | py |
 | `anthropic-no-error-handling` | WARNING | Anthropic API call not in try/except | py |
 | `gemini-no-error-handling` | WARNING | Gemini API call not in try/except | py |
@@ -135,17 +143,20 @@ response = client.chat.completions.create(...)  # moderation handled in middlewa
 
 ## Provider Best Practices References
 
-- [OpenAI Safety Best Practices](https://platform.openai.com/docs/guides/safety-best-practices)
+- [OpenAI Safety Best Practices](https://developers.openai.com/api/docs/guides/safety-best-practices/)
+- [OpenAI Safety Checks](https://developers.openai.com/api/docs/guides/safety-checks/)
+- [OpenAI Moderation Guide](https://developers.openai.com/api/docs/guides/moderation)
 - [OpenAI API Key Safety](https://help.openai.com/en/articles/5112595-best-practices-for-api-key-safety)
-- [Anthropic API Documentation](https://docs.anthropic.com/en/api)
+- [Anthropic API Safeguards](https://support.claude.com/en/articles/9199617-api-safeguards-tools)
+- [Anthropic API Key Best Practices](https://support.claude.com/en/articles/9767949-api-key-best-practices-keeping-your-keys-safe-and-secure)
+- [Google Gemini Safety Guidance](https://ai.google.dev/gemini-api/docs/safety-guidance)
 - [Google Gemini Safety Settings](https://ai.google.dev/gemini-api/docs/safety-settings)
-- [Cohere API Documentation](https://docs.cohere.com/)
-- [Mistral API Documentation](https://docs.mistral.ai/)
+- [Cohere Safety Modes](https://docs.cohere.com/docs/safety-modes)
+- [Mistral Guardrailing](https://docs.mistral.ai/capabilities/guardrailing/)
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/)
 
 ## Stats
 
-- **23 YAML rule files** containing **51 individual rules** (multi-language rules split per language)
-- **51 test files** with positive and negative test cases
-- **74 total files** across 23 rule directories
+- **31 YAML rule files** containing **65 individual rules** (multi-language rules split per language)
 - **5 providers covered:** OpenAI, Anthropic, Google Gemini, Cohere, Mistral
 - **5 languages:** Python, JavaScript/TypeScript, Go, Java, Ruby
