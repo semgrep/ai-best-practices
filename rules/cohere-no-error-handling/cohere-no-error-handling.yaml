@@ -1,0 +1,21 @@
+rules:
+  - id: cohere-no-error-handling
+    languages: [python]
+    severity: WARNING
+    message: >-
+      Cohere API call without error handling. Wrap API calls in try/except to
+      handle rate limits, API errors, and network issues gracefully.
+    metadata:
+      category: security
+      confidence: MEDIUM
+      technology: [cohere]
+    patterns:
+      - pattern-either:
+          - pattern: $CLIENT.chat(...)
+          - pattern: $CLIENT.generate(...)
+          - pattern: $CLIENT.chat_stream(...)
+      - pattern-not-inside: |
+          try:
+              ...
+          except ...:
+              ...

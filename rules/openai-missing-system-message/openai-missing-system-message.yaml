@@ -1,0 +1,38 @@
+rules:
+  - id: openai-missing-system-message-python
+    languages: [python]
+    severity: WARNING
+    message: >-
+      OpenAI chat completion created without a system message. A system message
+      helps establish behavioral guidelines and safety boundaries for the model.
+    metadata:
+      category: security
+      confidence: MEDIUM
+      technology: [openai]
+    patterns:
+      - pattern: |
+          $CLIENT.chat.completions.create(..., messages=$MSGS, ...)
+      - metavariable-pattern:
+          metavariable: $MSGS
+          patterns:
+            - pattern: '[..., {"role": "user", ...}, ...]'
+            - pattern-not: '[..., {"role": "system", ...}, ...]'
+
+  - id: openai-missing-system-message-js
+    languages: [javascript, typescript]
+    severity: WARNING
+    message: >-
+      OpenAI chat completion created without a system message. A system message
+      helps establish behavioral guidelines and safety boundaries for the model.
+    metadata:
+      category: security
+      confidence: MEDIUM
+      technology: [openai]
+    patterns:
+      - pattern: |
+          $CLIENT.chat.completions.create({..., messages: $MSGS, ...})
+      - metavariable-pattern:
+          metavariable: $MSGS
+          patterns:
+            - pattern: '[..., {role: "user", ...}, ...]'
+            - pattern-not: '[..., {role: "system", ...}, ...]'

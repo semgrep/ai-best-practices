@@ -1,0 +1,19 @@
+rules:
+  - id: openai-no-error-handling
+    languages: [python]
+    severity: WARNING
+    message: >-
+      OpenAI API call without error handling. Wrap API calls in try/except to
+      handle rate limits (RateLimitError), API errors (APIError), and network
+      issues gracefully.
+    metadata:
+      category: security
+      confidence: MEDIUM
+      technology: [openai]
+    patterns:
+      - pattern: $CLIENT.chat.completions.create(...)
+      - pattern-not-inside: |
+          try:
+              ...
+          except ...:
+              ...

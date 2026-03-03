@@ -1,0 +1,18 @@
+rules:
+  - id: gemini-no-error-handling
+    languages: [python]
+    severity: WARNING
+    message: >-
+      Google Gemini API call without error handling. Wrap API calls in
+      try/except to handle API errors and network issues gracefully.
+    metadata:
+      category: security
+      confidence: MEDIUM
+      technology: [gemini]
+    patterns:
+      - pattern: $MODEL.generate_content(...)
+      - pattern-not-inside: |
+          try:
+              ...
+          except ...:
+              ...

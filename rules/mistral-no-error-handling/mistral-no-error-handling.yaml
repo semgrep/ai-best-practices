@@ -1,0 +1,20 @@
+rules:
+  - id: mistral-no-error-handling
+    languages: [python]
+    severity: WARNING
+    message: >-
+      Mistral API call without error handling. Wrap API calls in try/except to
+      handle rate limits, API errors, and network issues gracefully.
+    metadata:
+      category: security
+      confidence: MEDIUM
+      technology: [mistral]
+    patterns:
+      - pattern-either:
+          - pattern: $CLIENT.chat.complete(...)
+          - pattern: $CLIENT.chat.stream(...)
+      - pattern-not-inside: |
+          try:
+              ...
+          except ...:
+              ...
