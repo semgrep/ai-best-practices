@@ -12,8 +12,10 @@ rules:
     patterns:
       - pattern-either:
           - pattern: $CLIENT.chat(...)
-          - pattern: $CLIENT.generate(...)
           - pattern: $CLIENT.chat_stream(...)
+      - pattern-inside: |
+          $CLIENT = cohere.Client(...)
+          ...
       - pattern-not-inside: |
           try:
               ...
