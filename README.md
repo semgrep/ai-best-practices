@@ -52,7 +52,7 @@ jobs:
           repository: semgrep/ai-best-practices
           path: ai-best-practices
       - name: Run Semgrep
-        uses: returntocorp/semgrep-action@v1
+        uses: semgrep/semgrep-action@v1
         with:
           config: ai-best-practices/rules/
 ```
