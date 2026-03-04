@@ -22,6 +22,7 @@ Semgrep rules that catch common trust & safety mistakes in LLM-powered applicati
 | **Google Gemini** | X | X | X | X | |
 | **Cohere** | X | X | | | |
 | **Mistral** | X | X | | | |
+| **Hugging Face** | X | X | | | |
 
 ## Quick Start
 
@@ -100,7 +101,7 @@ repos:
         args: ['--config', 'path/to/ai-best-practices/rules/', '--error']
 ```
 
-## Rule Catalog (31 rules, 65 sub-rules)
+## Rule Catalog (33 rules, 68 sub-rules)
 
 ### Hardcoded Credentials
 
@@ -111,7 +112,8 @@ repos:
 | `gemini-hardcoded-api-key` | `AIza*` keys in Gemini constructors | py, js/ts, go, java |
 | `cohere-hardcoded-api-key` | String literals in Cohere constructors | py, js/ts |
 | `mistral-hardcoded-api-key` | String literals in Mistral constructors | py, js/ts |
-| `llm-api-key-in-source` | Any variable matching AI key prefixes | py, js/ts, go, java, rb |
+| `huggingface-hardcoded-api-key` | `hf_*` tokens in HF InferenceClient / AutoModel | py, js/ts |
+| `llm-api-key-in-source` | Any variable matching AI key prefixes (`sk-`, `sk-ant-`, `AIza`, `hf_`) | py, js/ts, go, java, rb |
 
 ### Missing Safety Checks
 
@@ -152,6 +154,7 @@ repos:
 | `gemini-no-error-handling` | Gemini call outside try/except | py |
 | `cohere-no-error-handling` | Cohere call outside try/except | py |
 | `mistral-no-error-handling` | Mistral call outside try/except | py |
+| `huggingface-no-error-handling` | HF Inference call outside try/except | py |
 
 ## Suppressing False Positives
 
@@ -189,6 +192,7 @@ See [rules/README.md](rules/README.md) for detailed documentation.
 - [Google Gemini Safety Settings](https://ai.google.dev/gemini-api/docs/safety-settings)
 - [Cohere Safety Modes](https://docs.cohere.com/docs/safety-modes)
 - [Mistral Guardrailing](https://docs.mistral.ai/capabilities/guardrailing/)
+- [Hugging Face Security Tokens](https://huggingface.co/docs/hub/en/security-tokens)
 - [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/)
 
 ## License

@@ -1,6 +1,6 @@
 # Semgrep Rules for AI Trust & Safety Best Practices
 
-Static analysis rules that detect common trust and safety gaps in applications built on LLM APIs. These rules encode best practices published by OpenAI, Anthropic, Google, Cohere, and Mistral into automated checks that run in seconds.
+Static analysis rules that detect common trust and safety gaps in applications built on LLM APIs. These rules encode best practices published by OpenAI, Anthropic, Google, Cohere, Mistral, and Hugging Face into automated checks that run in seconds.
 
 ## Quick Start
 
@@ -17,7 +17,7 @@ semgrep --test rules/
 
 ## Rule Catalog
 
-### Phase 1: Hardcoded Credentials (6 rules)
+### Phase 1: Hardcoded Credentials (7 rules)
 
 Detects API keys hardcoded in source code instead of using environment variables or secrets managers.
 
@@ -28,7 +28,8 @@ Detects API keys hardcoded in source code instead of using environment variables
 | `gemini-hardcoded-api-key` | ERROR | `genai.configure(api_key="AIza...")` and variants | py, js/ts, go, java |
 | `cohere-hardcoded-api-key` | ERROR | `cohere.Client(api_key="...")` and variants | py, js/ts |
 | `mistral-hardcoded-api-key` | ERROR | `Mistral(api_key="...")` and variants | py, js/ts |
-| `llm-api-key-in-source` | ERROR | Any variable assigned a string matching known AI key prefixes (`sk-`, `sk-ant-`, `sk-proj-`, `AIza`) | py, js/ts, go, java, rb |
+| `huggingface-hardcoded-api-key` | ERROR | `InferenceClient(token="hf_...")` and variants | py, js/ts |
+| `llm-api-key-in-source` | ERROR | Any variable assigned a string matching known AI key prefixes (`sk-`, `sk-ant-`, `sk-proj-`, `AIza`, `hf_`) | py, js/ts, go, java, rb |
 
 ### Phase 2: Missing Safety Checks (12 rules)
 
@@ -61,7 +62,7 @@ Detects user input flowing into system prompts, enabling prompt injection attack
 
 **Taint sources:** Flask (`request.args`, `request.form`, `request.json`), Django (`request.GET`, `request.POST`), Express (`req.body`, `req.query`, `req.params`)
 
-### Phase 4: Missing Safeguards (10 rules)
+### Phase 4: Missing Safeguards (11 rules)
 
 Detects missing error handling, content moderation, and system messages.
 
@@ -77,6 +78,7 @@ Detects missing error handling, content moderation, and system messages.
 | `gemini-no-error-handling` | WARNING | Gemini API call not in try/except | py |
 | `cohere-no-error-handling` | WARNING | Cohere API call not in try/except | py |
 | `mistral-no-error-handling` | WARNING | Mistral API call not in try/except | py |
+| `huggingface-no-error-handling` | WARNING | Hugging Face Inference API call not in try/except | py |
 
 ## CI/CD Integration
 
@@ -153,10 +155,11 @@ response = client.chat.completions.create(...)  # moderation handled in middlewa
 - [Google Gemini Safety Settings](https://ai.google.dev/gemini-api/docs/safety-settings)
 - [Cohere Safety Modes](https://docs.cohere.com/docs/safety-modes)
 - [Mistral Guardrailing](https://docs.mistral.ai/capabilities/guardrailing/)
+- [Hugging Face Security Tokens](https://huggingface.co/docs/hub/en/security-tokens)
 - [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/)
 
 ## Stats
 
-- **31 YAML rule files** containing **65 individual rules** (multi-language rules split per language)
-- **5 providers covered:** OpenAI, Anthropic, Google Gemini, Cohere, Mistral
+- **33 YAML rule files** containing **68 individual rules** (multi-language rules split per language)
+- **6 providers covered:** OpenAI, Anthropic, Google Gemini, Cohere, Mistral, Hugging Face
 - **5 languages:** Python, JavaScript/TypeScript, Go, Java, Ruby

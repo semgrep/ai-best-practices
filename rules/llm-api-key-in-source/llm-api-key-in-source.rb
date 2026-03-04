@@ -7,6 +7,9 @@ anthropic_key = "sk-ant-api03-abcdefghijklmnopqrstuvwxyz"
 # ruleid: llm-api-key-in-source-ruby
 google_key = "AIzaSyAbcdefghijklmnopqrstuvwxyz1234567890"
 
+# ruleid: llm-api-key-in-source-ruby
+hf_token = "hf_abcdefghijklmnopqrstuvwxyz1234"
+
 # ok: llm-api-key-in-source-ruby
 api_key = ENV["OPENAI_API_KEY"]
 
