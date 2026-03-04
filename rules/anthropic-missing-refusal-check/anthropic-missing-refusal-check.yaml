@@ -7,9 +7,12 @@ rules:
       response.stop_reason to handle cases where the model stops unexpectedly
       (e.g., due to max_tokens or content filtering).
     metadata:
+      cwe: "CWE-693: Protection Mechanism Failure"
       category: security
       confidence: HIGH
       technology: [anthropic]
+      references:
+        - https://docs.anthropic.com/en/api/messages
     patterns:
       - pattern: $RESP.content
       - pattern-inside: |
@@ -32,9 +35,12 @@ rules:
       response.stop_reason to handle cases where the model stops unexpectedly
       (e.g., due to max_tokens or content filtering).
     metadata:
+      cwe: "CWE-693: Protection Mechanism Failure"
       category: security
       confidence: HIGH
       technology: [anthropic]
+      references:
+        - https://docs.anthropic.com/en/api/messages
     patterns:
       - pattern: $RESP.content
       - pattern-either:

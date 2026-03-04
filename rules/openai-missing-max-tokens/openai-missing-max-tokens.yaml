@@ -7,6 +7,7 @@ rules:
       max_tokens prevents unexpectedly long or expensive responses and limits
       potential abuse. See https://developers.openai.com/api/docs/guides/safety-best-practices
     metadata:
+      cwe: "CWE-693: Protection Mechanism Failure"
       category: security
       confidence: HIGH
       technology: [openai]
@@ -24,6 +25,7 @@ rules:
       max_tokens prevents unexpectedly long or expensive responses and limits
       potential abuse. See https://developers.openai.com/api/docs/guides/safety-best-practices
     metadata:
+      cwe: "CWE-693: Protection Mechanism Failure"
       category: security
       confidence: HIGH
       technology: [openai]

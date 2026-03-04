@@ -8,9 +8,12 @@ rules:
       client.classifiers.moderate_chat()) to check content for harmful material.
       See https://docs.mistral.ai/capabilities/guardrailing/
     metadata:
+      cwe: "CWE-693: Protection Mechanism Failure"
       category: security
       confidence: MEDIUM
       technology: [mistral]
+      references:
+        - https://docs.mistral.ai/capabilities/guardrailing/
     patterns:
       - pattern: $CLIENT.chat.complete(...)
       - pattern-inside: |
