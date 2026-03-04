@@ -6,9 +6,12 @@ rules:
       OpenAI chat completion created without a system message. A system message
       helps establish behavioral guidelines and safety boundaries for the model.
     metadata:
+      cwe: "CWE-693: Protection Mechanism Failure"
       category: security
       confidence: MEDIUM
       technology: [openai]
+      references:
+        - https://developers.openai.com/api/docs/guides/safety-best-practices/
     patterns:
       - pattern: |
           $CLIENT.chat.completions.create(..., messages=$MSGS, ...)
@@ -25,9 +28,12 @@ rules:
       OpenAI chat completion created without a system message. A system message
       helps establish behavioral guidelines and safety boundaries for the model.
     metadata:
+      cwe: "CWE-693: Protection Mechanism Failure"
       category: security
       confidence: MEDIUM
       technology: [openai]
+      references:
+        - https://developers.openai.com/api/docs/guides/safety-best-practices/
     patterns:
       - pattern: |
           $CLIENT.chat.completions.create({..., messages: $MSGS, ...})

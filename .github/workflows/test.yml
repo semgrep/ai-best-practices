@@ -1,0 +1,19 @@
+name: Test Rules
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate rules
+        run: semgrep --validate --config rules/
+
+      - name: Run tests
+        run: semgrep --test rules/

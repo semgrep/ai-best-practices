@@ -8,9 +8,12 @@ rules:
       properly filter harmful content. See
       https://developers.openai.com/api/docs/guides/moderation
     metadata:
+      cwe: "CWE-693: Protection Mechanism Failure"
       category: security
       confidence: MEDIUM
       technology: [openai]
+      references:
+        - https://developers.openai.com/api/docs/guides/moderation
     pattern-either:
       - patterns:
           - pattern: $RESP.results[0].categories

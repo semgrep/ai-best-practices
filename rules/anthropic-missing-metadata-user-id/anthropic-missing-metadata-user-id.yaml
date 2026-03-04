@@ -7,9 +7,12 @@ rules:
       metadata object with a hashed user_id to enable abuse tracking and policy
       enforcement. See https://docs.anthropic.com/en/api/messages
     metadata:
+      cwe: "CWE-693: Protection Mechanism Failure"
       category: security
       confidence: HIGH
       technology: [anthropic]
+      references:
+        - https://docs.anthropic.com/en/api/messages
     patterns:
       - pattern: $CLIENT.messages.create(...)
       - pattern-not: $CLIENT.messages.create(..., metadata=$META, ...)
@@ -22,9 +25,12 @@ rules:
       metadata object with a hashed user_id to enable abuse tracking and policy
       enforcement. See https://docs.anthropic.com/en/api/messages
     metadata:
+      cwe: "CWE-693: Protection Mechanism Failure"
       category: security
       confidence: HIGH
       technology: [anthropic]
+      references:
+        - https://docs.anthropic.com/en/api/messages
     patterns:
       - pattern: "$CLIENT.messages.create({...})"
       - pattern-not: "$CLIENT.messages.create({..., metadata: $META, ...})"

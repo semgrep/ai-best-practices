@@ -8,9 +8,12 @@ rules:
       boundaries for the model. See
       https://ai.google.dev/gemini-api/docs/safety-guidance
     metadata:
+      cwe: "CWE-693: Protection Mechanism Failure"
       category: security
       confidence: HIGH
       technology: [gemini]
+      references:
+        - https://ai.google.dev/gemini-api/docs/safety-guidance
     patterns:
       - pattern: genai.GenerativeModel(...)
       - pattern-not: genai.GenerativeModel(..., system_instruction=$SI, ...)
@@ -24,9 +27,12 @@ rules:
       boundaries for the model. See
       https://ai.google.dev/gemini-api/docs/safety-guidance
     metadata:
+      cwe: "CWE-693: Protection Mechanism Failure"
       category: security
       confidence: HIGH
       technology: [gemini]
+      references:
+        - https://ai.google.dev/gemini-api/docs/safety-guidance
     patterns:
       - pattern: "$CLIENT.getGenerativeModel({...})"
       - pattern-not: "$CLIENT.getGenerativeModel({..., systemInstruction: $SI, ...})"

@@ -2,6 +2,16 @@
 
 Semgrep rules that catch common trust & safety mistakes in LLM-powered applications. Scan any codebase in seconds to find hardcoded API keys, missing safety checks, prompt injection risks, and unhandled errors across all major AI providers.
 
+**35 rules | 74 sub-rules | 6 providers | 5 languages**
+
+## Quick Start
+
+```bash
+pip install semgrep
+git clone https://github.com/semgrep/ai-best-practices.git
+semgrep --config ai-best-practices/rules/ /path/to/your/project/
+```
+
 ## What It Catches
 
 | Category | Example | Severity |
@@ -23,37 +33,6 @@ Semgrep rules that catch common trust & safety mistakes in LLM-powered applicati
 | **Cohere** | X | X | | | |
 | **Mistral** | X | X | | | |
 | **Hugging Face** | X | X | | | |
-
-## Quick Start
-
-```bash
-# Install Semgrep
-pip install semgrep
-
-# Clone the rules
-git clone https://github.com/semgrep/ai-best-practices.git
-
-# Scan your project
-semgrep --config ai-best-practices/rules/ /path/to/your/project/
-```
-
-## Example Findings
-
-**Hardcoded API key:**
-```
-rules/openai-hardcoded-api-key/openai-hardcoded-api-key.py
-   severity:error rule:openai-hardcoded-api-key-python:
-   OpenAI API key is hardcoded in source code. Use environment variables
-   or a secrets manager instead.
-```
-
-**Prompt injection risk:**
-```
-app.py
-   severity:error rule:openai-user-input-in-system-prompt-python:
-   User input flows into the OpenAI system prompt. This enables prompt
-   injection attacks where users can override system instructions.
-```
 
 ## CI/CD Integration
 
@@ -101,61 +80,6 @@ repos:
         args: ['--config', 'path/to/ai-best-practices/rules/', '--error']
 ```
 
-## Rule Catalog (33 rules, 68 sub-rules)
-
-### Hardcoded Credentials
-
-| Rule | What it catches | Languages |
-|------|----------------|-----------|
-| `openai-hardcoded-api-key` | `sk-*` keys in OpenAI constructors | py, js/ts, go, java, rb |
-| `anthropic-hardcoded-api-key` | `sk-ant-*` keys in Anthropic constructors | py, js/ts, go, java, rb |
-| `gemini-hardcoded-api-key` | `AIza*` keys in Gemini constructors | py, js/ts, go, java |
-| `cohere-hardcoded-api-key` | String literals in Cohere constructors | py, js/ts |
-| `mistral-hardcoded-api-key` | String literals in Mistral constructors | py, js/ts |
-| `huggingface-hardcoded-api-key` | `hf_*` tokens in HF InferenceClient / AutoModel | py, js/ts |
-| `llm-api-key-in-source` | Any variable matching AI key prefixes (`sk-`, `sk-ant-`, `AIza`, `hf_`) | py, js/ts, go, java, rb |
-
-### Missing Safety Checks
-
-| Rule | What it catches | Languages |
-|------|----------------|-----------|
-| `openai-missing-refusal-check` | `.message.content` without `.message.refusal` guard | py, js/ts |
-| `anthropic-missing-refusal-check` | `.content` without `stop_reason` check | py, js/ts |
-| `openai-missing-user-parameter` | `chat.completions.create()` without `user=` | py, js/ts |
-| `openai-missing-safety-identifier` | `responses.create()` without `safety_identifier=` | py, js/ts |
-| `openai-missing-max-tokens` | `chat.completions.create()` without `max_tokens=` | py, js/ts |
-| `anthropic-missing-system-prompt` | `messages.create()` without `system=` | py, js/ts |
-| `anthropic-missing-max-tokens` | `messages.create()` without `max_tokens=` | py, js/ts |
-| `anthropic-missing-metadata-user-id` | `messages.create()` without `metadata=` for user tracking | py, js/ts |
-| `gemini-missing-safety-settings` | `generate_content()` without `safety_settings=` | py, js/ts |
-| `gemini-missing-system-instruction` | `GenerativeModel()` without `system_instruction=` | py, js/ts |
-| `mistral-missing-safe-prompt` | `chat.complete()` without `safe_prompt=` | py, js/ts |
-| `cohere-missing-safety-mode` | `chat()` without `safety_mode=` | py, js/ts |
-
-### Prompt Injection (taint analysis)
-
-| Rule | What it catches | Languages |
-|------|----------------|-----------|
-| `openai-user-input-in-system-prompt` | Request data &rarr; system message content | py, js/ts |
-| `anthropic-user-input-in-system-prompt` | Request data &rarr; `system=` parameter | py, js/ts |
-| `gemini-user-input-in-system-prompt` | Request data &rarr; `system_instruction=` | py, js/ts |
-
-### Missing Safeguards
-
-| Rule | What it catches | Languages |
-|------|----------------|-----------|
-| `openai-missing-system-message` | Chat completion without a system message | py, js/ts |
-| `openai-missing-moderation` | Chat completion without moderation in same function | py |
-| `openai-missing-moderation-check` | Moderation response accessed without checking `.flagged` | py |
-| `mistral-missing-moderation` | Chat completion without `classifiers.moderate()` in same function | py |
-| `cohere-safety-mode-off` | `safety_mode="OFF"` explicitly disabling safety | py, js/ts |
-| `openai-no-error-handling` | OpenAI call outside try/except | py |
-| `anthropic-no-error-handling` | Anthropic call outside try/except | py |
-| `gemini-no-error-handling` | Gemini call outside try/except | py |
-| `cohere-no-error-handling` | Cohere call outside try/except | py |
-| `mistral-no-error-handling` | Mistral call outside try/except | py |
-| `huggingface-no-error-handling` | HF Inference call outside try/except | py |
-
 ## Suppressing False Positives
 
 ```python
@@ -167,18 +91,98 @@ response = client.chat.completions.create(...)  # moderation handled in middlewa
 
 - **Go/Java**: Only credential detection rules (struct/builder patterns prevent reliable missing-field detection)
 - **Taint sources**: Flask, Django, and Express only (Sanic, Koa, Hapi, FastAPI query params not covered)
-- **Error handling**: Python only (JS/TS async patterns too varied for reliable detection)
+- **Error handling**: Most rules Python-only; OpenAI and Anthropic also support JS/TS try/catch detection
 - **Moderation rule**: Same-function scope (middleware-based moderation will false-positive)
+- **Ruby SDK patterns may vary**: The `ruby-openai` and Anthropic Ruby gems use different conventions than official SDKs
+
+## Rule Catalog
+
+### Hardcoded Credentials (7 rules)
+
+| Rule ID | Severity | What it Detects | Languages |
+|---------|----------|----------------|-----------|
+| `openai-hardcoded-api-key` | ERROR | `OpenAI(api_key="sk-...")` and variants | py, js/ts, go, java, rb |
+| `anthropic-hardcoded-api-key` | ERROR | `Anthropic(api_key="sk-ant-...")` and variants | py, js/ts, go, java, rb |
+| `gemini-hardcoded-api-key` | ERROR | `genai.configure(api_key="AIza...")` and variants | py, js/ts, go, java |
+| `cohere-hardcoded-api-key` | ERROR | `cohere.Client(api_key="...")` and variants | py, js/ts |
+| `mistral-hardcoded-api-key` | ERROR | `Mistral(api_key="...")` and variants | py, js/ts |
+| `huggingface-hardcoded-api-key` | ERROR | `InferenceClient(token="hf_...")` and variants | py, js/ts |
+| `llm-api-key-in-source` | ERROR | Any variable assigned a string matching known AI key prefixes (`sk-`, `sk-ant-`, `sk-proj-`, `AIza`, `hf_`) | py, js/ts, go, java, rb |
+
+### Missing Safety Checks (12 rules)
+
+| Rule ID | Severity | What it Detects | Languages |
+|---------|----------|----------------|-----------|
+| `openai-missing-refusal-check` | WARNING | Accessing `.message.content` without checking `.message.refusal` | py, js/ts |
+| `anthropic-missing-refusal-check` | WARNING | Accessing `.content` without checking `stop_reason` | py, js/ts |
+| `openai-missing-user-parameter` | WARNING | `chat.completions.create()` without `user=` parameter | py, js/ts |
+| `openai-missing-safety-identifier` | WARNING | `responses.create()` without `safety_identifier=` parameter | py, js/ts |
+| `openai-missing-max-tokens` | WARNING | `chat.completions.create()` without `max_tokens=` parameter | py, js/ts |
+| `anthropic-missing-system-prompt` | WARNING | `messages.create()` without `system=` parameter | py, js/ts |
+| `anthropic-missing-max-tokens` | WARNING | `messages.create()` without `max_tokens=` parameter | py, js/ts |
+| `anthropic-missing-metadata-user-id` | WARNING | `messages.create()` without `metadata=` for user tracking | py, js/ts |
+| `gemini-missing-safety-settings` | WARNING | `generate_content()` without `safety_settings=` parameter | py, js/ts |
+| `gemini-missing-system-instruction` | WARNING | `GenerativeModel()` without `system_instruction=` parameter | py, js/ts |
+| `mistral-missing-safe-prompt` | WARNING | `chat.complete()` without `safe_prompt=` parameter | py, js/ts |
+| `cohere-missing-safety-mode` | WARNING | `chat()` without explicit `safety_mode=` parameter | py, js/ts |
+
+### Prompt Injection (5 taint rules)
+
+Uses Semgrep's taint analysis to trace data flow from web framework request objects (Flask, Django, Express) to LLM API system prompt parameters.
+
+| Rule ID | Severity | What it Detects | Languages |
+|---------|----------|----------------|-----------|
+| `openai-user-input-in-system-prompt` | ERROR | User input &rarr; `{"role": "system", "content": X}` | py, js/ts |
+| `anthropic-user-input-in-system-prompt` | ERROR | User input &rarr; `system=` parameter | py, js/ts |
+| `gemini-user-input-in-system-prompt` | ERROR | User input &rarr; `system_instruction=` parameter | py, js/ts |
+| `mistral-user-input-in-system-prompt` | ERROR | User input &rarr; `{"role": "system", "content": X}` | py, js/ts |
+| `cohere-user-input-in-system-prompt` | ERROR | User input &rarr; `preamble=` parameter | py, js/ts |
+
+### Missing Safeguards (11 rules)
+
+| Rule ID | Severity | What it Detects | Languages |
+|---------|----------|----------------|-----------|
+| `openai-missing-system-message` | WARNING | `messages=[...]` with no `{"role": "system", ...}` | py, js/ts |
+| `openai-missing-moderation` | WARNING | `chat.completions.create()` without `moderations.create()` in same function | py |
+| `openai-missing-moderation-check` | WARNING | Moderation response accessed without checking `.flagged` | py |
+| `mistral-missing-moderation` | WARNING | `chat.complete()` without `classifiers.moderate()` in same function | py |
+| `cohere-safety-mode-off` | ERROR | `safety_mode="OFF"` explicitly disabling all safety guardrails | py, js/ts |
+| `openai-no-error-handling` | WARNING | OpenAI API call not in try/except or try/catch | py, js/ts |
+| `anthropic-no-error-handling` | WARNING | Anthropic API call not in try/except or try/catch | py, js/ts |
+| `gemini-no-error-handling` | WARNING | Gemini API call not in try/except | py |
+| `cohere-no-error-handling` | WARNING | Cohere API call not in try/except | py |
+| `mistral-no-error-handling` | WARNING | Mistral API call not in try/except | py |
+| `huggingface-no-error-handling` | WARNING | Hugging Face Inference API call not in try/except | py |
 
 ## Contributing
+
+### Project structure
+
+```
+rules/<rule-id>/
+  <rule-id>.yaml       # Semgrep rule definition (one or more sub-rules)
+  <rule-id>.py         # Python test file
+  <rule-id>.js         # JS/TS test file (if applicable)
+  <rule-id>.go         # Go test file (if applicable)
+```
+
+### Adding a rule
 
 1. Create a rule directory: `rules/<rule-id>/`
 2. Write test files with `# ruleid:` and `# ok:` annotations
 3. Write the YAML rule
 4. Validate: `semgrep --validate --config rules/<rule-id>/`
-5. Test: `cd rules/<rule-id>/ && semgrep --test`
+5. Test: `semgrep --test rules/<rule-id>/`
 
-See [rules/README.md](rules/README.md) for detailed documentation.
+### Running the full suite
+
+```bash
+# Validate all rules
+semgrep --validate --config rules/
+
+# Run all tests
+semgrep --test rules/
+```
 
 ## References
 

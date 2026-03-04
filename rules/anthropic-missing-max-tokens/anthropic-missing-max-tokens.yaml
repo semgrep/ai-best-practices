@@ -6,9 +6,12 @@ rules:
       Anthropic messages.create() called without 'max_tokens' parameter. Setting
       max_tokens prevents unexpectedly long or expensive responses.
     metadata:
+      cwe: "CWE-693: Protection Mechanism Failure"
       category: security
       confidence: HIGH
       technology: [anthropic]
+      references:
+        - https://docs.anthropic.com/en/api/messages
     patterns:
       - pattern: $CLIENT.messages.create(...)
       - pattern-not: $CLIENT.messages.create(..., max_tokens=$MT, ...)
@@ -20,9 +23,12 @@ rules:
       Anthropic messages.create() called without 'max_tokens' parameter. Setting
       max_tokens prevents unexpectedly long or expensive responses.
     metadata:
+      cwe: "CWE-693: Protection Mechanism Failure"
       category: security
       confidence: HIGH
       technology: [anthropic]
+      references:
+        - https://docs.anthropic.com/en/api/messages
     patterns:
       - pattern: "$CLIENT.messages.create({...})"
       - pattern-not: "$CLIENT.messages.create({..., max_tokens: $MT, ...})"

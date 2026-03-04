@@ -7,9 +7,12 @@ rules:
       settings to control content filtering thresholds for harmful content
       categories.
     metadata:
+      cwe: "CWE-693: Protection Mechanism Failure"
       category: security
       confidence: HIGH
       technology: [gemini]
+      references:
+        - https://ai.google.dev/gemini-api/docs/safety-settings
     patterns:
       - pattern: $MODEL.generate_content(...)
       - pattern-not: $MODEL.generate_content(..., safety_settings=$SETTINGS, ...)
@@ -22,9 +25,12 @@ rules:
       settings to control content filtering thresholds for harmful content
       categories.
     metadata:
+      cwe: "CWE-693: Protection Mechanism Failure"
       category: security
       confidence: HIGH
       technology: [gemini]
+      references:
+        - https://ai.google.dev/gemini-api/docs/safety-settings
     patterns:
       - pattern: "$MODEL.generateContent({...})"
       - pattern-not: "$MODEL.generateContent({..., safetySettings: $S, ...})"
