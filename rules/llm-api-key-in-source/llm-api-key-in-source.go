@@ -10,6 +10,9 @@ func main() {
 	// ruleid: llm-api-key-in-source-go
 	googleKey := "AIzaSyAbcdefghijklmnopqrstuvwxyz1234567890"
 
+	// ruleid: llm-api-key-in-source-go
+	hfToken := "hf_abcdefghijklmnopqrstuvwxyz1234"
+
 	// ok: llm-api-key-in-source-go
 	apiKey2 := os.Getenv("OPENAI_API_KEY")
 

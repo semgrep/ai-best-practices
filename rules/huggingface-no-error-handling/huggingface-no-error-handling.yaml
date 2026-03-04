@@ -1,0 +1,27 @@
+rules:
+  - id: huggingface-no-error-handling
+    languages: [python]
+    severity: WARNING
+    message: >-
+      Hugging Face Inference API call without error handling. Wrap API calls
+      in try/except to handle InferenceTimeoutError, HfHubHTTPError, and
+      network issues gracefully.
+    metadata:
+      category: security
+      confidence: MEDIUM
+      technology: [huggingface]
+    pattern-either:
+      - patterns:
+          - pattern: $CLIENT.chat_completion(...)
+          - pattern-not-inside: |
+              try:
+                  ...
+              except ...:
+                  ...
+      - patterns:
+          - pattern: $CLIENT.text_generation(...)
+          - pattern-not-inside: |
+              try:
+                  ...
+              except ...:
+                  ...

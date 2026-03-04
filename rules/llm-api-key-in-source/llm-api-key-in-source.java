@@ -9,6 +9,9 @@ class Example {
         // ruleid: llm-api-key-in-source-java
         String googleKey = "AIzaSyAbcdefghijklmnopqrstuvwxyz1234567890";
 
+        // ruleid: llm-api-key-in-source-java
+        String hfToken = "hf_abcdefghijklmnopqrstuvwxyz1234";
+
         // ok: llm-api-key-in-source-java
         String apiKey2 = System.getenv("OPENAI_API_KEY");
 

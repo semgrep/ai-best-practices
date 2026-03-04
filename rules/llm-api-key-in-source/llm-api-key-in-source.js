@@ -10,6 +10,9 @@ var anthropicKey = "sk-ant-api03-abcdefghijklmnopqrstuvwxyz";
 // ruleid: llm-api-key-in-source-javascript
 const googleKey = "AIzaSyAbcdefghijklmnopqrstuvwxyz1234567890";
 
+// ruleid: llm-api-key-in-source-javascript
+const hfToken = "hf_abcdefghijklmnopqrstuvwxyz1234";
+
 // ok: llm-api-key-in-source-javascript
 const apiKey2 = process.env.OPENAI_API_KEY;
 

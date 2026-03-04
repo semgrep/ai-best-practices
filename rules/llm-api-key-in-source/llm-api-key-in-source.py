@@ -12,6 +12,9 @@ anthropic_key = "sk-ant-api03-abcdefghijklmnopqrstuvwxyz"
 # ruleid: llm-api-key-in-source-python
 google_key = "AIzaSyAbcdefghijklmnopqrstuvwxyz1234567890"
 
+# ruleid: llm-api-key-in-source-python
+hf_token = "hf_abcdefghijklmnopqrstuvwxyz1234"
+
 # ok: llm-api-key-in-source-python
 api_key = os.environ["OPENAI_API_KEY"]
 
