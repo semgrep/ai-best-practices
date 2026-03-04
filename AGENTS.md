@@ -71,5 +71,5 @@ CWE mapping:
 
 ## Current Stats
 
-- 35 YAML rule files, 74 individual sub-rules
+- 40 YAML rule files, 83 individual sub-rules
 - All rules validated, all tests passing
