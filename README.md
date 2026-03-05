@@ -2,7 +2,7 @@
 
 Semgrep rules that catch common trust & safety mistakes in LLM-powered applications. Scan any codebase in seconds to find hardcoded API keys, missing safety checks, prompt injection risks, and unhandled errors across all major AI providers.
 
-**35 rules | 74 sub-rules | 6 providers | 5 languages**
+**40 rules | 83 sub-rules | 6 providers + Claude Code hooks | 6 languages**
 
 ## Quick Start
 
@@ -22,17 +22,19 @@ semgrep --config ai-best-practices/rules/ /path/to/your/project/
 | **Missing safety settings** | Gemini calls without `safety_settings` | WARNING |
 | **No error handling** | API calls outside try/except blocks | WARNING |
 | **Missing moderation** | Chat completions without moderation checks | WARNING |
+| **Hooks security** | Unsafe input handling, path traversal, command injection in Claude Code hooks | WARNING/ERROR |
 
 ## Providers & Languages
 
-|  | Python | JS/TS | Go | Java | Ruby |
-|--|:------:|:-----:|:--:|:----:|:----:|
-| **OpenAI** | X | X | X | X | X |
-| **Anthropic** | X | X | X | X | X |
-| **Google Gemini** | X | X | X | X | |
-| **Cohere** | X | X | | | |
-| **Mistral** | X | X | | | |
-| **Hugging Face** | X | X | | | |
+|  | Python | JS/TS | Go | Java | Ruby | Bash |
+|--|:------:|:-----:|:--:|:----:|:----:|:----:|
+| **OpenAI** | X | X | X | X | X | |
+| **Anthropic** | X | X | X | X | X | |
+| **Google Gemini** | X | X | X | X | | |
+| **Cohere** | X | X | | | | |
+| **Mistral** | X | X | | | | |
+| **Hugging Face** | X | X | | | | |
+| **Claude Code Hooks** | X | | | | | X |
 
 ## CI/CD Integration
 
@@ -154,6 +156,16 @@ Uses Semgrep's taint analysis to trace data flow from web framework request obje
 | `mistral-no-error-handling` | WARNING | Mistral API call not in try/except | py |
 | `huggingface-no-error-handling` | WARNING | Hugging Face Inference API call not in try/except | py |
 
+### Claude Code Hooks Security (5 rules)
+
+| Rule ID | Severity | What it Detects | Languages |
+|---------|----------|----------------|-----------|
+| `hooks-no-input-validation` | WARNING | `json.loads(sys.stdin.read())` without try/except; piping to eval/bash | py, bash |
+| `hooks-unquoted-variable` | ERROR | Tainted stdin data flowing to `eval`, `bash -c`, `sh -c`, `exec` | bash |
+| `hooks-path-traversal` | ERROR | Stdin JSON data used in file operations without `os.path.realpath()` | py, bash |
+| `hooks-relative-script-path` | WARNING | `source ./...`, `bash ./...` — relative path script invocations | bash |
+| `hooks-sensitive-file-access` | WARNING | Stdin JSON data used in file operations without sensitive file filtering | py, bash |
+
 ## Contributing
 
 ### Project structure
@@ -197,6 +209,7 @@ semgrep --test rules/
 - [Cohere Safety Modes](https://docs.cohere.com/docs/safety-modes)
 - [Mistral Guardrailing](https://docs.mistral.ai/capabilities/guardrailing/)
 - [Hugging Face Security Tokens](https://huggingface.co/docs/hub/en/security-tokens)
+- [Claude Code Hooks](https://docs.anthropic.com/en/docs/claude-code/hooks)
 - [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/)
 
 ## License
