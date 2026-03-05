@@ -4,7 +4,7 @@ rules:
     languages: [python]
     severity: ERROR
     message: >-
-      Hook input flows into a file path without validation. Claude Code hooks
+      Hook input flows into a file path without validation. Claude Code and Cursor hooks
       receive JSON input that may contain user-controlled paths. An attacker
       could craft input with path traversal sequences (e.g., '../../etc/passwd')
       to read, modify, or delete arbitrary files. Use os.path.realpath() or
@@ -14,9 +14,10 @@ rules:
       category: security
       confidence: MEDIUM
       subcategory: [vuln]
-      technology: [claude-code]
+      technology: [claude-code, cursor]
       references:
         - https://docs.anthropic.com/en/docs/claude-code/hooks
+        - https://cursor.com/docs/agent/hooks
     pattern-sources:
       - pattern: json.loads(...)
       - pattern: json.load(...)
@@ -48,7 +49,7 @@ rules:
     languages: [bash]
     severity: ERROR
     message: >-
-      Hook input flows into a file path without validation. Claude Code hooks
+      Hook input flows into a file path without validation. Claude Code and Cursor hooks
       receive JSON input that may contain user-controlled paths. An attacker
       could craft input with path traversal sequences (e.g., '../../etc/passwd')
       to read, modify, or delete arbitrary files. Use realpath or readlink -f
@@ -58,9 +59,10 @@ rules:
       category: security
       confidence: MEDIUM
       subcategory: [vuln]
-      technology: [claude-code]
+      technology: [claude-code, cursor]
       references:
         - https://docs.anthropic.com/en/docs/claude-code/hooks
+        - https://cursor.com/docs/agent/hooks
     pattern-sources:
       - pattern: |
           $VAR=$(... | jq ...)

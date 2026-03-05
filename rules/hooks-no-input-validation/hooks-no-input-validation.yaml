@@ -3,15 +3,16 @@ rules:
     languages: [python]
     severity: WARNING
     message: >-
-      Claude Code hook reads stdin without input validation. Wrap json.loads/json.load
+      Claude Code and Cursor hook reads stdin without input validation. Wrap json.loads/json.load
       calls in try/except to handle malformed or unexpected input gracefully.
     metadata:
       cwe: "CWE-20: Improper Input Validation"
       category: security
       confidence: MEDIUM
-      technology: [claude-code]
+      technology: [claude-code, cursor]
       references:
         - https://docs.anthropic.com/en/docs/claude-code/hooks
+        - https://cursor.com/docs/agent/hooks
     patterns:
       - pattern-either:
           - pattern: json.loads(sys.stdin.read())
@@ -26,14 +27,15 @@ rules:
     severity: WARNING
     message: >-
       Piping untrusted input directly to eval, bash, or sh is dangerous in Claude Code
-      hooks. Validate and sanitize input before executing it.
+      and Cursor hooks. Validate and sanitize input before executing it.
     metadata:
       cwe: "CWE-20: Improper Input Validation"
       category: security
       confidence: MEDIUM
-      technology: [claude-code]
+      technology: [claude-code, cursor]
       references:
         - https://docs.anthropic.com/en/docs/claude-code/hooks
+        - https://cursor.com/docs/agent/hooks
     pattern-either:
       - pattern: eval $...ARGS
       - pattern: echo $...ARGS | bash

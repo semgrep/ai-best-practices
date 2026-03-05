@@ -17,3 +17,6 @@ bash "$CLAUDE_PROJECT_DIR/hooks/check.sh"
 
 # ok: hooks-relative-script-path-bash
 source "$HOME/.claude/hooks/hook.sh"
+
+# ok: hooks-relative-script-path-bash
+bash "$CURSOR_PROJECT_DIR/hooks/check.sh"
