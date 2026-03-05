@@ -69,6 +69,10 @@ CWE mapping:
 - Missing safety params: `CWE-693: Protection Mechanism Failure`
 - Prompt injection (taint): `CWE-77: Command Injection`
 
+## Important Reminders
+
+- **Always update README.md** when adding, removing, or modifying rules. Update the stats line, providers table, "What It Catches" table, and Rule Catalog section as needed.
+
 ## Current Stats
 
 - 40 YAML rule files, 83 individual sub-rules
