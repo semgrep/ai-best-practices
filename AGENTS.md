@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This repo contains Semgrep static analysis rules that detect trust and safety gaps in LLM-powered applications. Rules cover 6 providers (OpenAI, Anthropic, Google Gemini, Cohere, Mistral, Hugging Face) across Python, JS/TS, Go, Java, and Ruby.
+This repo contains Semgrep static analysis rules that detect trust and safety gaps in LLM-powered applications. Rules cover 6 providers (OpenAI, Anthropic, Google Gemini, Cohere, Mistral, Hugging Face), MCP servers, LangChain, and Claude Code/Cursor hooks across Python, JS/TS, Go, Java, Ruby, and Bash/Generic.
 
 ## Repo Structure
 
@@ -75,5 +75,5 @@ CWE mapping:
 
 ## Current Stats
 
-- 40 YAML rule files, 83 individual sub-rules
+- 58 YAML rule files, 102 individual sub-rules
 - All rules validated, all tests passing
