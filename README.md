@@ -2,7 +2,7 @@
 
 Semgrep rules that catch common trust & safety mistakes in LLM-powered applications. Scan any codebase in seconds to find hardcoded API keys, missing safety checks, prompt injection risks, and unhandled errors across all major AI providers.
 
-**40 rules | 83 sub-rules | 6 providers + Claude Code & Cursor hooks | 6 languages**
+**58 rules | 102 sub-rules | 6 providers + MCP + Claude Code & Cursor hooks + LangChain | 7 languages**
 
 ## Quick Start
 
@@ -23,10 +23,13 @@ semgrep --config ai-best-practices/rules/ /path/to/your/project/
 | **No error handling** | API calls outside try/except blocks | WARNING |
 | **Missing moderation** | Chat completions without moderation checks | WARNING |
 | **Hooks security** | Unsafe input handling, path traversal, command injection in Claude Code and Cursor hooks | WARNING/ERROR |
+| **MCP server flaws** | Command injection, SSRF, tool poisoning, credential leaks in MCP servers | ERROR |
+| **Agentic code execution** | LLM output flowing to `eval`/`exec`/`subprocess`, dangerous LangChain utilities | ERROR |
+| **Config file attacks** | Hidden Unicode in AI config files, unsafe IDE/agent settings | ERROR |
 
 ## Providers & Languages
 
-|  | Python | JS/TS | Go | Java | Ruby | Bash |
+|  | Python | JS/TS | Go | Java | Ruby | Bash/Generic |
 |--|:------:|:-----:|:--:|:----:|:----:|:----:|
 | **OpenAI** | X | X | X | X | X | |
 | **Anthropic** | X | X | X | X | X | |
@@ -34,7 +37,10 @@ semgrep --config ai-best-practices/rules/ /path/to/your/project/
 | **Cohere** | X | X | | | | |
 | **Mistral** | X | X | | | | |
 | **Hugging Face** | X | X | | | | |
+| **MCP Servers** | X | | | | | X |
+| **LangChain** | X | | | | | |
 | **Claude Code & Cursor Hooks** | X | | | | | X |
+| **IDE/Agent Config** | | | | | | X |
 
 ## CI/CD Integration
 
@@ -156,7 +162,7 @@ Uses Semgrep's taint analysis to trace data flow from web framework request obje
 | `mistral-no-error-handling` | WARNING | Mistral API call not in try/except | py |
 | `huggingface-no-error-handling` | WARNING | Hugging Face Inference API call not in try/except | py |
 
-### Claude Code & Cursor Hooks Security (5 rules)
+### Claude Code & Cursor Hooks Security (9 rules)
 
 | Rule ID | Severity | What it Detects | Languages |
 |---------|----------|----------------|-----------|
@@ -165,6 +171,39 @@ Uses Semgrep's taint analysis to trace data flow from web framework request obje
 | `hooks-path-traversal` | ERROR | Stdin JSON data used in file operations without `os.path.realpath()` | py, bash |
 | `hooks-relative-script-path` | WARNING | `source ./...`, `bash ./...` — relative path script invocations | bash |
 | `hooks-sensitive-file-access` | WARNING | Stdin JSON data used in file operations without sensitive file filtering | py, bash |
+| `hooks-unconditional-allow` | ERROR | Hook always outputs `permissionDecision: "allow"` without conditional checks | generic |
+| `hooks-stop-missing-active-check` | WARNING | Stop hook outputs `"block"` without checking `stop_hook_active` (infinite loop) | generic |
+| `hooks-dns-exfiltration` | ERROR | DNS commands (`ping`, `nslookup`, `dig`) with variable expansion for data exfiltration | generic |
+| `hooks-wget-pipe-bash` | ERROR | `curl ... \| bash` or `wget ... \| sh` remote code execution | generic |
+
+### MCP Server Security (6 rules)
+
+| Rule ID | Severity | What it Detects | Languages |
+|---------|----------|----------------|-----------|
+| `mcp-command-injection` | ERROR | `os.system()`, `subprocess(shell=True)`, `eval()` in `@mcp.tool()` handlers | py |
+| `mcp-ssrf` | ERROR | Unvalidated URLs passed to `requests.get()`/`urllib` in MCP tools | py |
+| `mcp-tool-poisoning` | ERROR | Suspicious directives (`<IMPORTANT>`, sensitive paths, "do not mention") in tool docstrings | generic |
+| `mcp-unsanitized-return` | WARNING | External HTTP responses returned directly from MCP tools without sanitization | py |
+| `mcp-credential-in-response` | WARNING | MCP tool return values containing credential keys (`api_key`, `token`, etc.) | py |
+| `mcp-hardcoded-config-secret` | ERROR | Plaintext API keys (`sk-*`, `hf_*`, `AIza*`) in MCP config JSON files | generic |
+
+### Agent Config File Security (5 rules)
+
+| Rule ID | Severity | What it Detects | Languages |
+|---------|----------|----------------|-----------|
+| `ai-config-hidden-unicode` | ERROR | Invisible zero-width Unicode characters in `.cursorrules`, `copilot-instructions.md`, `CLAUDE.md` | generic |
+| `ide-settings-executable-path` | WARNING | Executable path overrides in `.vscode/settings.json` pointing to relative paths | generic |
+| `claude-settings-bypass-permissions` | ERROR | `bypassPermissions`, `allowUnsandboxedCommands`, `enableWeakerNestedSandbox` in settings | generic |
+| `claude-settings-env-url-override` | ERROR | `ANTHROPIC_BASE_URL`/`OPENAI_BASE_URL` overrides redirecting API traffic | generic |
+| `claude-settings-auto-enable-mcp` | WARNING | `enableAllProjectMcpServers: true` auto-loading untrusted MCP servers | generic |
+
+### Agentic Code Execution Safety (3 rules)
+
+| Rule ID | Severity | What it Detects | Languages |
+|---------|----------|----------------|-----------|
+| `llm-output-to-exec` | ERROR | LLM API response flowing to `eval()`, `exec()`, `subprocess(shell=True)`, `os.system()` | py, js/ts |
+| `langchain-dangerous-exec` | ERROR | `PythonREPL.run()`, `BashProcess.run()`, `PythonAstREPLTool` usage | py |
+| `agent-unbounded-loop` | WARNING | `while True` loop with LLM API calls and no `break` condition | py |
 
 ## Contributing
 
@@ -211,7 +250,11 @@ semgrep --test rules/
 - [Hugging Face Security Tokens](https://huggingface.co/docs/hub/en/security-tokens)
 - [Claude Code Hooks](https://docs.anthropic.com/en/docs/claude-code/hooks)
 - [Cursor Hooks](https://cursor.com/docs/agent/hooks)
+- [MCP Security Best Practices](https://modelcontextprotocol.io/specification/draft/basic/security_best_practices)
 - [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/)
+- [OWASP Top 10 for Agentic Applications 2026](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/)
+- [Pillar Security — Rules File Backdoor](https://www.pillar.security/blog/new-vulnerability-in-github-copilot-and-cursor-how-hackers-can-weaponize-code-agents)
+- [Trail of Bits — claude-code-config](https://github.com/trailofbits/claude-code-config)
 
 ## License
 
